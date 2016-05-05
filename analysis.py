@@ -1,3 +1,7 @@
+"""
+@author: Michael Pastorino
+"""
+
 import analysis_helpers
 import datetime
 
