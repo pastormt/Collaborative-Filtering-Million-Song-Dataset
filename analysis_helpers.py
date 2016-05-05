@@ -1,3 +1,7 @@
+"""
+@author: michaelpastorino
+"""
+
 import numpy
 import wendy_kan
 from math import ceil
