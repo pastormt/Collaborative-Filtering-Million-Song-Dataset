@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-
-Copied from the Github of Wendy Kan, of Kaggle
+From Kaggle: needed for inclusion in this folder for performance evaluation to work --
 https://github.com/benhamner/Metrics/blob/master/Python/ml_metrics/average_precision.py
-
 """
 
 import numpy as np
