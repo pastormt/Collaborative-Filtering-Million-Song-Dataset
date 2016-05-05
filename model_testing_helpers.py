@@ -25,6 +25,7 @@ def portionOfTrainData( originalFile, outputFile, reqLines ):
 portionOfTrainData("train_triplets-copy.txt", "train_triplets-10M.txt", 10000000)
 
 # take a portion of the training data to split into train and test
+# randomly choosing the same number of lines for each set, per user
 def divyTrainAndTest( originalFileInput, trainFileOutput, testFileOutput ):
     import random
     import math
