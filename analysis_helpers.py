@@ -1,5 +1,5 @@
 """
-@author: michaelpastorino
+@author: Michael Pastorino
 """
 
 import numpy
