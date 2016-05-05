@@ -152,8 +152,6 @@ def populateStorage( trainOrTest, dataFile, listenersSongs, listenersTotalPlays,
     # to add for last user in file, as will have finished 'for' loop, and exited 'with'
     appendStorage(trainOrTest, listenerID, songs, totalPlays, listenersSongs, listenersTotalPlays, songsListeners, songsTotalPlays, testSongsListeners, testListenersSongs)
 
-# note: for the listeners (not for songs, though), can be done more efficiently, as the listeners in test data
-# are not in the training data... think about it ... but not worth writing another one...
 def pruneSimilarities( similarities, testListenersSongs, cutoff=0 ):
     prunedSimilarities = {} # keys are listener, values are dicts of {other listener : similarity}
     # goal is to remove similarities below a certain cutoff
