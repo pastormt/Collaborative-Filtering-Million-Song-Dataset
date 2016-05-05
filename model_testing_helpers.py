@@ -2,7 +2,7 @@
 """
 Created on Thu Apr  7 23:13:54 2016
 
-@author: michaelpastorino
+@author: Michael Pastorino
 """
 
 def portionOfTrainData( originalFile, outputFile, reqLines ):
