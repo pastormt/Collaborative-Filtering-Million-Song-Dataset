@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Copied from the Github of Kaggle
-NOT WRITTEN BY ME
+NOT WRITTEN BY ME -- needs to be included for mean avg precision calculation by analysis.py
 https://github.com/benhamner/Metrics/blob/master/Python/ml_metrics/average_precision.py
 """
 
