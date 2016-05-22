@@ -10,3 +10,7 @@ For each pair of listeners, it does this comparison for each song the 2 listener
 The code also uses mean average precision (of 2 ordered lists of songs, each describing 1 listener's listening history) to compare the songs two listeners have in common, and leaves open the open to alter the weights of this vs. the method described above. 
 
 Finally, after looking at songs a given pair of listeners have both listened to, it looks at, for those songs listener A listened to than B did not, and vice-versa, how similar or different those songs are to songs the other listener listened to.
+
+The idea is, if person1 listened to 4 Beatles songs, and person2 listened to 3 of the same Beatles songs and 1 other Beatles song that person 1 didn't listen to, and person3 listened to 3 of the same Beatles songs as person1 and 1 Mozart tune, without knowing they are Beatles songs, you should be able to tell that person1 and person2 are more similar than person1 and person3. We can do this by looking at the dictionaries of which listeners listened to which songs, with similar songs having many of the same listeners with similar play percents / play counts (same expression as above).
+
+Currently running test w/ 526 test listeners.
