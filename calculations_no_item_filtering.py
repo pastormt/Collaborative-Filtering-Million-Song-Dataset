@@ -22,7 +22,7 @@ def calcInCommon( songDict1, songDict2, totalPlays1, totalPlays2, intersection )
     inCommonPercent = 0.0
     inCommonPlayCount = 0.0
     
-    for song in intersection.iterkeys():
+    for song in intersection:
         playPer1 = songDict1[song]
         playPer2 = songDict2[song]
         
