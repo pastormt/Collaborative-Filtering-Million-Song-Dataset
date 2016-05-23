@@ -13,7 +13,6 @@ def inCommonFormula( val1, val2 ):
     larger = max(val1, val2)
     return smaller + ((smaller / larger) * (larger - smaller))
 
-
 def calcInCommon( songDict1, songDict2, totalPlays1, totalPlays2, intersection ):
     """
     Returns
@@ -23,7 +22,7 @@ def calcInCommon( songDict1, songDict2, totalPlays1, totalPlays2, intersection )
     inCommonPercent = 0.0
     inCommonPlayCount = 0.0
     
-    for song in intersection:
+    for song in intersection.iterkeys():
         playPer1 = songDict1[song]
         playPer2 = songDict2[song]
         
@@ -89,14 +88,14 @@ def calcSimsAndRecommend( testListeners, listenersTotalPlays, listenersSongs, pr
                 if len(intersection) != 0:
                     
                     # inCommon is a list of 2 different measures returned by calcInCommon 
-                    inCommon = calcInCommon(listenersSongs[listenerA], songsDictB, listenersTotalPlays[listenerA], listenersTotalPlays[listenerB], intersection)                                    
-                    
-                    listenerSimilarities[listenerB] = inCommon
+                    listenerSimilarities[listenerB] = calcInCommon(listenersSongs[listenerA], songsDictB, listenersTotalPlays[listenerA], listenersTotalPlays[listenerB], intersection)
         
         # now, for each similarity list (for each listenerB similar to listenerA), normalize
         scaleCoeff = []
         for i in range(0,2):
-            scaleCoeff.append(100 / max([v[i] for v in listenerSimilarities.itervalues()]))
+            maxValue = max([v[i] for v in listenerSimilarities.itervalues()])
+            scaler = 1.0 / maxValue if maxValue != 0 else 0.0
+            scaleCoeff.append(scaler)
         
         # normalized, and combined
         listenerSimilarities = {k: sum(numpy.array(v)*numpy.array(scaleCoeff))**power for k, v in listenerSimilarities.iteritems()}
@@ -116,11 +115,9 @@ def calcSimsAndRecommend( testListeners, listenersTotalPlays, listenersSongs, pr
             BminusA = {k: v for k, v in listenersSongs[listenerB].iteritems() if k not in listenersSongs[listenerA]}
             for song, playPercent in BminusA.iteritems():
                 if song not in recs: # need to add it to dictionary if not already in there
-                    recs[song] = similarity
-                    # recs[song] = playPercent * similarity
+                    recs[song] = playPercent * similarity
                 else:
                     recs[song] += playPercent * similarity
-                    # recs[song] += playPercent * similarity
         listenersRecs[listenerA] = [k for k in sorted(recs, key=recs.get, reverse=True)]
     return listenersRecs
     
