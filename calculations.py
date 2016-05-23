@@ -207,7 +207,9 @@ def calcSimsAndRecommend( testListeners, listenersTotalPlays, listenersSongs, so
         
         # recommend, and prune
         numRecsRequired = len(listenersSongs[listenerA])
-        maxSim = 900 # highest max value of 6 similarities combined (200 x 3 + 100 x 3... above)
+        
+        # 900 is highest max value of 6 similarities combined (200 x 3 + 100 x 3... above)
+        maxSim = max(listenerSimilarities.values())
             
         recs = {} # for this test listener's recommendations. key = songID, value = recommendation value
         
