@@ -36,6 +36,9 @@ def calcSongsInCommon( AminusB, BminusA, intersection, listenersTotalPlays, song
     
     """
     def helper( dict1, dict2, songsSimilarities ):  
+        print dict1
+        print dict2
+        print songsSimilarities
         songsInCommonPercent, songsInCommonPlayCount, songsInCommonMAP = 0.0, 0.0, 0.0
         
         for song1, songListeners1 in dict1.iteritems():
@@ -204,7 +207,7 @@ def calcSimsAndRecommend( testListeners, listenersTotalPlays, listenersSongs, so
         
         # recommend, and prune
         numRecsRequired = len(listenersSongs[listenerA])
-        maxSim = 800 # highest max value of 5 similarities combined (200 x 3 + 100 x 2... above)
+        maxSim = 900 # highest max value of 6 similarities combined (200 x 3 + 100 x 3... above)
             
         recs = {} # for this test listener's recommendations. key = songID, value = recommendation value
         
