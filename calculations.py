@@ -7,12 +7,42 @@ Created on Wed May 18 15:01:37 2016
 import kaggle
 import numpy
 from datetime import datetime
-from multiprocessing import Pool
+from multiprocessing import Pool, Manager
 
 def inCommonFormula( val1, val2 ):
     smaller = min(val1, val2)
     larger = max(val1, val2)
     return smaller + ((smaller / larger) * (larger - smaller))
+    
+def utility_calcSongsInCommon( song2 ):
+    if frozenset([song1, song2]) in songsSimilarities: # if similarity between these 2 songs has already been calculated
+        inCommon = songsSimilarities[frozenset([song1, song2])]
+        thisPairInCommonPercent = inCommon[0]
+        thisPairInCommonPlayCount = inCommon[1] 
+        thisPairInCommonMAP = inCommon[2]
+    else:
+        thisPairInCommonPercent, thisPairInCommonPlayCount = 0.0, 0.0
+        songListeners2 = dict2[song2]
+        for listener, playPer1 in songListeners1.iteritems():
+            if listener in songListeners2:
+                playPer2 = songListeners2[listener]
+                # with %s...
+                thisPairInCommonPercent += inCommonFormula(playPer1, playPer2)
+                
+                # now repeat with playCounts... 
+                thisPairInCommonPlayCount += inCommonFormula(playPer1 * listenersTotalPlays[listener], playPer2 * listenersTotalPlays[listener])
+        
+        # 2nd similarity measure (MAP... a better version of % of listeners in common)
+        list1 = [k for k in sorted(songListeners1, key=songListeners1.get, reverse=True)]
+        list2 = [k for k in sorted(songListeners2, key=songListeners2.get, reverse=True)]
+        
+        # average precision both from listener1 to listener2 and vice versa
+        thisPairInCommonMAP = kaggle.apk(list2, list1, len(list1)) + kaggle.apk(list1, list2, len(list2))
+        songsSimilarities[frozenset([song1, song2])] = (thisPairInCommonPercent, thisPairInCommonPlayCount, thisPairInCommonMAP)
+        
+    songsInCommonTriplet[0] += thisPairInCommonPercent
+    songsInCommonTriplet[1] += thisPairInCommonPlayCount
+    songsInCommonTriplet[2] += thisPairInCommonMAP
 
 def calcSongsInCommon( AminusB, BminusA, intersection ):
     """
@@ -36,55 +66,27 @@ def calcSongsInCommon( AminusB, BminusA, intersection ):
     songsInCommonPercent and songsInCommonPlayCount are updated to reflect the similarity of thse songs
     
     """
-    def helper2( song2 ):
-        if frozenset([song1, song2]) in songsSimilarities: # if similarity between these 2 songs has already been calculated
-            inCommon = songsSimilarities[frozenset([song1, song2])]
-            thisPairInCommonPercent = inCommon[0]
-            thisPairInCommonPlayCount = inCommon[1] 
-            thisPairInCommonMAP = inCommon[2]
-        else:
-            thisPairInCommonPercent, thisPairInCommonPlayCount = 0.0, 0.0
-            songListeners2 = dict2[song2]
-            for listener, playPer1 in songListeners1.iteritems():
-                if listener in songListeners2:
-                    playPer2 = songListeners2[listener]
-                    # with %s...
-                    thisPairInCommonPercent += inCommonFormula(playPer1, playPer2)
-                    
-                    # now repeat with playCounts... 
-                    thisPairInCommonPlayCount += inCommonFormula(playPer1 * listenersTotalPlays[listener], playPer2 * listenersTotalPlays[listener])
-            
-            # 2nd similarity measure (MAP... a better version of % of listeners in common)
-            list1 = [k for k in sorted(songListeners1, key=songListeners1.get, reverse=True)]
-            list2 = [k for k in sorted(songListeners2, key=songListeners2.get, reverse=True)]
-
-            # average precision both from listener1 to listener2 and vice versa
-            thisPairInCommonMAP = kaggle.apk(list2, list1, len(list1)) + kaggle.apk(list1, list2, len(list2))
-            songsSimilarities[frozenset([song1, song2])] = (thisPairInCommonPercent, thisPairInCommonPlayCount, thisPairInCommonMAP)
-            
-        songsInCommonTriplet[0] += thisPairInCommonPercent
-        songsInCommonTriplet[1] += thisPairInCommonPlayCount
-        songsInCommonTriplet[2] += thisPairInCommonMAP
     
-    def helper( dict1, d2 ):  
+    def helper( dict1, d2 ):
         global songsInCommonTriplet # making accessible for helper2
         songsInCommonTriplet = [0.0, 0.0, 0.0] # songsInCommonPercent, songsInCommonPlayCount, songsInCommonMAP
-        
-        pool = Pool() # parallel programming
         
         global song1 # making accessible for helper2
         global songListeners1 # ditto
         global dict2 # ditto
         dict2 = d2
+        
         for key, value in dict1.iteritems():
             song1 = key # making accessible for helper2
             songListeners1 = value # ditto
-            pool.map(helper2, dict2) # parallel programming
+            pool = Pool()
+            pool.map(utility_calcSongsInCommon, dict2)
+            # compare each song's songListeners dictionary with that of every song the other listener listened to
             pool.close()
             pool.join()
-            # compare each song's songListeners dictionary with that of every song the other listener listened to
             
         return songsInCommonTriplet
+        
     # comparing the items in listA not in listB to all items in list B, and vice versa.
     # therefore, the different items in each list would be compared to each other twice -- therefore, 2 * below
     songsInCommonPercent, songsInCommonPlayCount, songsInCommonMAP = tuple(2 * x for x in helper(BminusA, AminusB))
@@ -209,8 +211,11 @@ def calcSimsAndRecommend( testListeners, listenersTotalPlaysCopy, listenersSongs
         scaleCoeff = []
         for i in range(0,6): # len inCommon is 6
             # each of 1st 3 items in inCommon similarities list should count 2x as much as each of last 3
-            maxVal = 200 if i < 3 else 100
-            scaleCoeff.append(maxVal / max([v[i] for v in listenerSimilarities.itervalues()]))
+            scaleVal = 200 if i < 3 else 100
+            maxVal = max([v[i] for v in listenerSimilarities.itervalues()])
+            scaleFactor = scaleVal / maxVal if maxVal != 0.0 else 0.0
+            scaleCoeff.append(scaleFactor)
+            
         
         # normalized, and combined
         listenerSimilarities = {k: sum(numpy.array(v)*numpy.array(scaleCoeff)) for k, v in listenerSimilarities.iteritems()}
