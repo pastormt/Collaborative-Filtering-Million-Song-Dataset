@@ -25,9 +25,9 @@ def appendTrainData( listenerID, songs, totalPlays, listenersTotalPlays, listene
         songs[song] = playPercent
         
         if song not in songsListeners:
-            songsListeners[song] = {listenerID : playPercent}
+            songsListeners[song] = set(listenerID)
         else:
-            songsListeners[song][listenerID] = playPercent
+            songsListeners[song].add(listenerID)
     
     listenersTotalPlays[listenerID] = totalPlays
     listenersSongs[listenerID] = songs
