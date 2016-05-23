@@ -10,8 +10,7 @@ from datetime import datetime # for printing execution time of various stages of
 
 listenersTotalPlays = {} # keys are listenerIDs, values are total play count for corresponding listener
 listenersSongs = {} # keys are listenerIDs, values are dictionaries of songs : play counts per each that this listener listened to
-songsListeners = {} # kes are songIDs, valus are dictionaries of listener : play counts per each listener that listened to this song
-# basically, listenersSongs and songsListeners are 2 ways of looking at the same data -- need to store both for impact on MUCH simplying
+songsListeners = {} # keys are songIDs, values are sets of listeners 
 # later similarity calculations
 
 print "Populating training data @", datetime.now()
