@@ -77,11 +77,13 @@ def calcSongsInCommon( AminusB, BminusA, intersection ):
         dict2 = d2
         
         for key, value in dict1.iteritems():
+            # compare each song's songListeners dictionary with that of every song the other listener listened to
             song1 = key # making accessible for helper2
             songListeners1 = value # ditto
-            pool = Pool()
+            
+            # parallel processing
+            pool = Pool() 
             pool.map(utility_calcSongsInCommon, dict2)
-            # compare each song's songListeners dictionary with that of every song the other listener listened to
             pool.close()
             pool.join()
             
