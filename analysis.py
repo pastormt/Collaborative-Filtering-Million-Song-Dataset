@@ -5,7 +5,7 @@ Created on Tue May 17 20:34:04 2016
 @author: Michael Pastorino
 """
 import preprocessing
-import calculations_no_item_filtering as calculations # calculations.py imports kaggle.py
+import calculations_no_item_filtering as calculations # imports kaggle.py
 from datetime import datetime # for printing execution time of various stages of the program
 
 listenersTotalPlays = {} # keys are listenerIDs, values are total play count for corresponding listener
