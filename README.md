@@ -13,7 +13,7 @@ I developed a collaborative filtering system, which calculates similarities betw
 For each pair of users, I took the set of songs that each user had listened to, and took the intersection of those two sets -- which provided the list of songs they had both listened to. For each song the pair of users had each listened to, I then took percentage of each user's total song play count this song accounted for, as well as each user's raw play count for this song.
 
 Both seemed important in measuring similarity, as: 
-+ 1) By looking at the percentage of plays in common, you can, in the extreme case, find users that only listened to songs that a given specific other user also listened to
++ 1) By looking at the percentage of plays in common, you can, in the extreme case, find users that only listened to songs that a given other user also listened to
 + 2) By looking at the play counts, you can get a sense of the reliability of the measurement. As if two listeners, B and C, both listened only to songs that listener A listened to (so they both have 100% of plays in common), but listener B only played 1 song 1 time, whereas listener C's total play count is much greater, we can be more confident in saying that listener C and listener A are very similar (and less so regarding listeners B and A).
 
 ### Next Steps
