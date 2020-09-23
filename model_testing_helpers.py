@@ -79,7 +79,7 @@ def divyTrainAndTest( originalFileInput, trainFileOutput, testFileOutput ):
         curLine = 1
         
         openFile.seek(startEnd[0])
-        offset = 0
+        offset = startEnd[0]
         
         for line in openFile:
             if offset > startEnd[1]:
